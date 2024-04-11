@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"strconv"
+	"strings"
 )
 
 type Lexer struct {
@@ -20,7 +21,9 @@ type Token struct {
 func GetTokensBetween(index int, end_token_identifier string, input []Token) ([]Token, int) {
 	tokens := []Token{}
 
+	// while identifiers are not equal and more tokens exist
 	for input[index].Identifier != end_token_identifier && index+1 < len(input) {
+		// add token to list
 		tokens = append(tokens, input[index])
 		index += 1
 	}
@@ -66,14 +69,14 @@ func (l *Lexer) Tokenize() []Token {
 
 					new_tokens = append(new_tokens, token)
 				}
-			} else {
+			} else if token.Identifier != "Whitespace" && token.Identifier != "Tab" && token.Identifier != "Newline" {
 				new_tokens = append(new_tokens, token)
 			}
 
 		}
 	}
-	l.Tokens = new_tokens
 
+	l.Tokens = new_tokens
 	return l.Tokens
 }
 
@@ -81,9 +84,69 @@ func (l *Lexer) Tokenize() []Token {
 func (l *Lexer) AddBufferAs(identifier string) {
 	l.Tokens = append(l.Tokens, Token{
 		Identifier: identifier,
-		Content:    l.Buffer,
+		Content:    strings.TrimSpace(l.Buffer),
 	})
 	l.Buffer = ""
+}
+
+type SpecialCharacter struct {
+	Identifier string
+	Content    string
+}
+
+var SPECIALCHARACTERS = []SpecialCharacter{
+	{
+		Identifier: "Whitespace",
+		Content:    " ",
+	},
+	{
+		Identifier: "Tab",
+		Content:    "\t",
+	},
+	{
+		Identifier: "Newline",
+		Content:    "\n",
+	},
+	{
+		Identifier: "Terminator",
+		Content:    ";",
+	},
+	{
+		Identifier: "Equals",
+		Content:    "=",
+	},
+	{
+		Identifier: "LCurly",
+		Content:    "{",
+	},
+	{
+		Identifier: "RCurly",
+		Content:    "}",
+	},
+	{
+		Identifier: "LParen",
+		Content:    "(",
+	},
+	{
+		Identifier: "RParen",
+		Content:    ")",
+	},
+	{
+		Identifier: "Comma",
+		Content:    ",",
+	},
+	{
+		Identifier: "PlusOperator",
+		Content:    "+",
+	},
+	{
+		Identifier: "MinusOperator",
+		Content:    "-",
+	},
+	{
+		Identifier: "MultOperator",
+		Content:    "*",
+	},
 }
 
 func (l *Lexer) GetNextToken() Token {
@@ -92,47 +155,24 @@ func (l *Lexer) GetNextToken() Token {
 	token := Token{}
 
 	if !l.BufferIsString {
-		// Character is not a whitespace
-		if currentCharacter == " " || currentCharacter == "\t" || currentCharacter == "\n" {
-			l.AddBufferAs("Identifier")
-		} else if currentCharacter == ";" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "Terminator"
-			token.Content = ";"
-		} else if currentCharacter == "=" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "Equals"
-			token.Content = "="
-		} else if currentCharacter == "{" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "LCurly"
-			token.Content = "{"
-		} else if currentCharacter == "}" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "RCurly"
-			token.Content = "}"
-		} else if currentCharacter == "(" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "LParen"
-			token.Content = "("
-		} else if currentCharacter == ")" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "RParen"
-			token.Content = ")"
-		} else if currentCharacter == "," {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "Comma"
-			token.Content = ","
-		} else if currentCharacter == "+" || currentCharacter == "-" || currentCharacter == "*" {
-			l.AddBufferAs("Identifier")
-			token.Identifier = "Operator"
-			token.Content = currentCharacter
-		} else if currentCharacter == "\"" {
+		is_special := false
+		for _, character := range SPECIALCHARACTERS {
+			if currentCharacter == character.Content {
+				is_special = true
+				l.AddBufferAs("Identifier")
+				token.Identifier = character.Identifier
+				token.Content = character.Content
+			}
+		}
+
+		if currentCharacter == "\"" {
 			l.BufferIsString = true
 			l.Buffer += currentCharacter
 		} else {
 			// Character is other character (aka part of identifier)
-			l.Buffer += currentCharacter
+			if !is_special {
+				l.Buffer += currentCharacter
+			}
 		}
 	} else {
 		l.Buffer += currentCharacter

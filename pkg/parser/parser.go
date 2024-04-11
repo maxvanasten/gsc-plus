@@ -23,7 +23,7 @@ func ParseTokens(tokens []lexer.Token) []Node {
 	index := 0
 	for index < len(tokens) {
 		token := tokens[index]
-		fmt.Println("Starting at", index, "(", token.Identifier, ")")
+		fmt.Println("Starting at", index, "(", token.Identifier, ") (", token.Content, ")")
 
 		if token.Identifier == "VariableKeyword" && index+3 < len(tokens) {
 			// NOTE: Variable declaration
@@ -50,7 +50,7 @@ func ParseTokens(tokens []lexer.Token) []Node {
 
 			fmt.Println("New index: ", index+new_index)
 			index = new_index
-		} else if token.Identifier == "LParen" || token.Identifier == "RParen" || token.Identifier == "Identifier" || token.Identifier == "String" || token.Identifier == "Number" || token.Identifier == "Operator" {
+		} else if token.Identifier == "LParen" || token.Identifier == "RParen" || token.Identifier == "Identifier" || token.Identifier == "String" || token.Identifier == "Number" || token.Identifier == "PlusOperator" || token.Identifier == "MinusOperator" || token.Identifier == "MultOperator" {
 			nodes = append(nodes, Node{
 				Identifier: token.Identifier,
 				Content:    token.Content,
