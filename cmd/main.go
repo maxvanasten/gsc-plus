@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -26,7 +25,7 @@ func main() {
 
 	output_file_path := "./output/gsc/" + file_name + ".gsc"
 
-	fmt.Println("FILENAME:", file_name)
+	fmt.Println("Attempting to compile:", file_name)
 
 	input_bytes, err := os.ReadFile(file_path)
 	if err != nil {
@@ -40,26 +39,29 @@ func main() {
 
 	tokens := lexer.Tokenize()
 
-	fmt.Println("Found", len(tokens), "tokens:")
-	for _, token := range tokens {
-		fmt.Println("[", token.Identifier, "]: >", token.Content, "<")
-	}
+	fmt.Println("Found", len(tokens), "tokens")
+	// for _, token := range tokens {
+	// 	fmt.Println("[", token.Identifier, "]: >", token.Content, "<")
+	// }
 
 	nodes := parser.ParseTokens(tokens)
-	fmt.Println("Nodes:")
-	for _, node := range nodes {
-		fmt.Println(node)
-	}
+	// fmt.Println("Nodes:")
+	// for _, node := range nodes {
+	// 	fmt.Println(node)
+	// }
 
 	output := compiler.Compile(nodes, 0)
-	fmt.Println(output)
+	// fmt.Println(output)
 
+	fmt.Printf("Writing compiled code to ./output/gsc/%v.gsc\n", file_name)
 	os.WriteFile(output_file_path, []byte(output), 0666)
 
 	ast_json, err := json.Marshal(nodes)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("There was an error converting the AST to JSON:", err)
+		os.Exit(3)
 	}
 
+	fmt.Printf("Writing AST to ./output/ast/%v.json\n", file_name)
 	os.WriteFile("./output/ast/"+file_name+".json", ast_json, 0666)
 }

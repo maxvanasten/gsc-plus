@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/maxvanasten/gsc++/pkg/lexer"
 )
@@ -23,7 +23,6 @@ func ParseTokens(tokens []lexer.Token) []Node {
 	index := 0
 	for index < len(tokens) {
 		token := tokens[index]
-		fmt.Println("Starting at", index, "(", token.Identifier, ") (", token.Content, ")")
 
 		if token.Identifier == "VariableKeyword" && index+3 < len(tokens) {
 			// NOTE: Variable declaration
