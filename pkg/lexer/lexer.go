@@ -69,7 +69,7 @@ func (l *Lexer) Tokenize() []Token {
 
 					new_tokens = append(new_tokens, token)
 				}
-			} else if token.Identifier != "Whitespace" && token.Identifier != "Tab" && token.Identifier != "Newline" {
+			} else if token.Identifier != "Newline" && token.Identifier != "Whitespace" && token.Identifier != "Tab" {
 				new_tokens = append(new_tokens, token)
 			}
 

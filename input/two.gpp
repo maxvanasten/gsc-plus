@@ -1,12 +1,21 @@
+#include common_scripts\utility;
+#include maps\mp\gametypes_zm\_hud_util;
+#include maps\mp\zombies\_zm_utility;
+
 fn test_func() {
   let name = "Max";
+
   let age = 22;
+  age = 30;
+
+  let str = name + ", " + age;
 
   return name + ": " + age;
 }
 
 fn hello(name) {
   print("Hello, " + name)
+  print(arg1, arg2)
 }
 
 fn func_with_multiple_args(arg1, arg2, arg3) {
