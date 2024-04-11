@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/maxvanasten/gsc++/pkg/lexer"
+	"github.com/maxvanasten/gsc++/pkg/parser"
 )
 
 func main() {
@@ -39,5 +40,11 @@ func main() {
 	fmt.Println("Found", len(tokens), "tokens:")
 	for _, token := range tokens {
 		fmt.Println("[", token.Identifier, "]: >", token.Content, "<")
+	}
+
+	nodes := parser.ParseTokens(tokens)
+	fmt.Println("Nodes:")
+	for _, node := range nodes {
+		fmt.Println(node)
 	}
 }
