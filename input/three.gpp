@@ -1,0 +1,15 @@
+fn another(arg, arg, arg) {
+	print("HEllo!");
+}
+
+fn other_func(arg, another_arg) {
+	level > some_func();
+}
+
+fn todo() {
+  level > some_other_function(w);
+  level > some_func_with_args(arg1, "Hello");
+  level >> some_function();
+  level >> some_other_func_with_args(arg1, arg2, "Some String");
+  level >> some_func(1 + 2);
+}
