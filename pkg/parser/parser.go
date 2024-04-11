@@ -3,10 +3,11 @@ package parser
 import (
 	// "fmt"
 
-	"fmt"
-
+	"github.com/maxvanasten/gsc++/pkg/debug"
 	"github.com/maxvanasten/gsc++/pkg/lexer"
 )
+
+var d = debug.Debugger{Name: "Parser", Level: "debug"}
 
 type Parser struct {
 	Tokens []lexer.Token
@@ -26,24 +27,24 @@ func ParseTokens(tokens []lexer.Token) []Node {
 	for index < len(tokens) {
 		token := tokens[index]
 
-		fmt.Println("Identifier:", token.Identifier, "Content:", token.Content)
+		d.Log("debug", "Identifier: "+token.Identifier+"Content: "+token.Content)
 
 		if token.Identifier == "VariableKeyword" && index+3 < len(tokens) {
 			// NOTE: Variable declaration
 			// let VARNAME = VARVALUE;
 			// let VARNAME = VARVALUE1 +/-/* VARVALUE2 ...;
 			var_name := tokens[index+1].Content
-			// fmt.Println("New variable declaration", tokens[index+1].Content)
+			// d.Log("New variable declaration", tokens[index+1].Content)
 			var_tokens, new_index := lexer.GetTokensBetween(index+3, "Terminator", tokens)
 			index = new_index
 			parsed_var_tokens := ParseTokens(var_tokens)
 			for _, var_token := range var_tokens {
-				fmt.Println("VAR_TOKEN:", var_token)
+				d.Log("debug", "VAR_TOKEN: "+var_token.Identifier+"["+var_token.Content+"]")
 			}
 
-			fmt.Println("PARSED_VAR_TOKENS:")
+			d.Log("debug", "PARSED_VAR_TOKENS:")
 			for _, parsed_var_token := range parsed_var_tokens {
-				fmt.Println(parsed_var_token)
+				d.Log("debug", "PARSED_VAR_TOKEN: "+parsed_var_token.Identifier+"["+parsed_var_token.Content+"]")
 			}
 
 			nodes = append(nodes, Node{
@@ -78,7 +79,6 @@ func ParseTokens(tokens []lexer.Token) []Node {
 			})
 		} else if token.Identifier == "Identifier" && index+3 < len(tokens) {
 			if tokens[index+1].Identifier == "LParen" {
-				fmt.Println("TEST")
 				function_name := token.Content
 
 				arguments, new_index := lexer.GetTokensBetween(index+2, "RParen", tokens)

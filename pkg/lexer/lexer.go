@@ -3,7 +3,11 @@ package lexer
 import (
 	"strconv"
 	"strings"
+
+	"github.com/maxvanasten/gsc++/pkg/debug"
 )
+
+var d = debug.Debugger{Name: "Lexer", Level: "debug"}
 
 type Lexer struct {
 	Input          []byte

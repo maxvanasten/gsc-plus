@@ -7,9 +7,12 @@ import (
 	"strings"
 
 	"github.com/maxvanasten/gsc++/pkg/compiler"
+	"github.com/maxvanasten/gsc++/pkg/debug"
 	"github.com/maxvanasten/gsc++/pkg/lexer"
 	"github.com/maxvanasten/gsc++/pkg/parser"
 )
+
+var d = debug.Debugger{Name: "Main", Level: "debug"}
 
 func main() {
 	if len(os.Args) != 2 {
@@ -40,18 +43,10 @@ func main() {
 	tokens := lexer.Tokenize()
 
 	fmt.Println("Found", len(tokens), "tokens")
-	// for _, token := range tokens {
-	// 	fmt.Println("[", token.Identifier, "]: >", token.Content, "<")
-	// }
 
 	nodes := parser.ParseTokens(tokens)
-	// fmt.Println("Nodes:")
-	// for _, node := range nodes {
-	// 	fmt.Println(node)
-	// }
 
 	output := compiler.Compile(nodes, 0)
-	// fmt.Println(output)
 
 	fmt.Printf("Writing compiled code to ./output/gsc/%v.gsc\n", file_name)
 	os.WriteFile(output_file_path, []byte(output), 0666)

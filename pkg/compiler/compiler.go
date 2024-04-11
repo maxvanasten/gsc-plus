@@ -1,11 +1,13 @@
 package compiler
 
 import (
-	"fmt"
 	"strings"
 
+	"github.com/maxvanasten/gsc++/pkg/debug"
 	"github.com/maxvanasten/gsc++/pkg/parser"
 )
+
+var d = debug.Debugger{Name: "Compiler", Level: "debug"}
 
 func GetTabs(level int) string {
 	tabs := ""
@@ -21,7 +23,7 @@ func Compile(nodes []parser.Node, level int) string {
 	output := ""
 
 	for _, node := range nodes {
-		fmt.Println("Node: ", node.Identifier)
+		d.Log("debug", "Node: "+node.Identifier+"["+node.Content+"]")
 		if node.Identifier == "Variable_Declaration" || node.Identifier == "Variable_Reassignment" {
 			output += GetTabs(level) + node.Content + " = "
 			for _, child := range node.Children {
