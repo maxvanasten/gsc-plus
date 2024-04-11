@@ -1,0 +1,5 @@
+let name = "Max";
+let age = 22;
+let name_copy = name;
+let greeting = "Hello" + name + ", you are " + age + " years old!";
+let math = (20 - 10) * 5;
