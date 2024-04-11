@@ -27,6 +27,20 @@ func Compile(nodes []parser.Node, level int) string {
 			}
 			output = strings.TrimSuffix(output, " ")
 			output += ";\n"
+		} else if node.Identifier == "Function_Declaration" {
+			output += GetTabs(level) + node.Content + "("
+			for _, argument := range node.Children[0].Children {
+				output += argument.Content + ", "
+			}
+			output = strings.TrimSuffix(output, ", ")
+			output += ") {\n"
+
+			for _, scope_node := range node.Children[1].Children {
+				scope_output := Compile([]parser.Node{scope_node}, level+1)
+				output += scope_output
+			}
+
+			output += "}\n\n"
 		}
 	}
 

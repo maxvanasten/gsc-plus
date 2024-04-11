@@ -48,9 +48,31 @@ func ParseTokens(tokens []lexer.Token) []Node {
 				Content:    var_name,
 				Children:   parsed_var_tokens,
 			})
+		} else if token.Identifier == "FunctionKeyword" {
+			function_name := tokens[index+1].Content
 
-			fmt.Println("New index: ", index+new_index)
+			arguments, new_index := lexer.GetTokensBetween(index+3, "RParen", tokens)
 			index = new_index
+			parsed_arguments := ParseTokens(arguments)
+
+			scope, new_index := lexer.GetTokensBetween(index+2, "RCurly", tokens)
+			index = new_index
+			parsed_scope := ParseTokens(scope)
+
+			nodes = append(nodes, Node{
+				Identifier: "Function_Declaration",
+				Content:    function_name,
+				Children: []Node{
+					{
+						Identifier: "Arguments",
+						Children:   parsed_arguments,
+					},
+					{
+						Identifier: "Scope",
+						Children:   parsed_scope,
+					},
+				},
+			})
 		} else if token.Identifier == "LParen" || token.Identifier == "RParen" || token.Identifier == "Identifier" || token.Identifier == "String" || token.Identifier == "Number" || token.Identifier == "PlusOperator" || token.Identifier == "MinusOperator" || token.Identifier == "MultOperator" {
 			nodes = append(nodes, Node{
 				Identifier: token.Identifier,
