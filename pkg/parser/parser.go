@@ -29,22 +29,23 @@ func ParseTokens(tokens []lexer.Token) []Node {
 			// NOTE: Variable declaration
 			// let VARNAME = VARVALUE;
 			// let VARNAME = VARVALUE1 +/-/* VARVALUE2 ...;
-			fmt.Println("New variable declaration", tokens[index+1].Content)
+			var_name := tokens[index+1].Content
+			// fmt.Println("New variable declaration", tokens[index+1].Content)
 			var_tokens, new_index := lexer.GetTokensBetween(index+3, "Terminator", tokens)
-
-			for _, var_token := range var_tokens {
-				fmt.Println("VAR_TOKEN:", var_token)
-			}
-
+			index = new_index
 			parsed_var_tokens := ParseTokens(var_tokens)
-			fmt.Println("PARSED_VAR_TOKENS:")
-			for _, parsed_var_token := range parsed_var_tokens {
-				fmt.Println(parsed_var_token)
-			}
+			// for _, var_token := range var_tokens {
+			// 	fmt.Println("VAR_TOKEN:", var_token)
+			// }
+
+			// fmt.Println("PARSED_VAR_TOKENS:")
+			// for _, parsed_var_token := range parsed_var_tokens {
+			// 	fmt.Println(parsed_var_token)
+			// }
 
 			nodes = append(nodes, Node{
 				Identifier: "Variable_Declaration",
-				Content:    tokens[index+1].Content,
+				Content:    var_name,
 				Children:   parsed_var_tokens,
 			})
 
