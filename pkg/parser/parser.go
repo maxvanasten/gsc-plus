@@ -3,6 +3,8 @@ package parser
 import (
 	// "fmt"
 
+	"fmt"
+
 	"github.com/maxvanasten/gsc++/pkg/debug"
 	"github.com/maxvanasten/gsc++/pkg/lexer"
 )
@@ -27,9 +29,10 @@ func ParseTokens(tokens []lexer.Token) []Node {
 	for index < len(tokens) {
 		token := tokens[index]
 
-		d.Log("debug", "Identifier: "+token.Identifier+"Content: "+token.Content)
+		d.Log("debug", "Identifier: "+token.Identifier+", Content: "+token.Content)
 
 		if token.Identifier == "VariableKeyword" && index+3 < len(tokens) {
+			d.Log("debug", "MATCHING: Variable Declaration")
 			// NOTE: Variable declaration
 			// let VARNAME = VARVALUE;
 			// let VARNAME = VARVALUE1 +/-/* VARVALUE2 ...;
@@ -53,6 +56,7 @@ func ParseTokens(tokens []lexer.Token) []Node {
 				Children:   parsed_var_tokens,
 			})
 		} else if token.Identifier == "FunctionKeyword" {
+			d.Log("debug", "MATCHING: Function Declaration")
 			function_name := tokens[index+1].Content
 
 			arguments, new_index := lexer.GetTokensBetween(index+3, "RParen", tokens)
@@ -77,8 +81,9 @@ func ParseTokens(tokens []lexer.Token) []Node {
 					},
 				},
 			})
-		} else if token.Identifier == "Identifier" && index+3 < len(tokens) {
-			if tokens[index+1].Identifier == "LParen" {
+		} else if token.Identifier == "Identifier" {
+			if tokens[index+1].Identifier == "LParen" && index+2 < len(tokens) {
+				d.Log("debug", "MATCHING: Function Call")
 				function_name := token.Content
 
 				arguments, new_index := lexer.GetTokensBetween(index+2, "RParen", tokens)
@@ -90,13 +95,15 @@ func ParseTokens(tokens []lexer.Token) []Node {
 					Content:    function_name,
 					Children:   parsed_arguments,
 				})
-			} else if token.Content == "#include" {
+			} else if token.Content == "#include" && index+1 < len(tokens) {
+				d.Log("debug", "MATCHING: Include Statement")
 				nodes = append(nodes, Node{
 					Identifier: "Include_Statement",
 					Content:    tokens[index+1].Content,
 				})
 				index += 2
-			} else if tokens[index+1].Identifier == "Equals" {
+			} else if tokens[index+1].Identifier == "Equals" && index+2 < len(tokens) {
+				d.Log("debug", "MATCHING: Variable Reassignment")
 				ass_tokens, new_index := lexer.GetTokensBetween(index+2, "Terminator", tokens)
 				index = new_index
 				parsed_ass_tokens := ParseTokens(ass_tokens)
@@ -106,6 +113,49 @@ func ParseTokens(tokens []lexer.Token) []Node {
 					Content:    token.Content,
 					Children:   parsed_ass_tokens,
 				})
+			} else if tokens[index+1].Identifier == "Greater" && index+2 < len(tokens) {
+				d.Log("debug", "MATCHING: Method Call")
+				object := token.Content
+				parsed_func_call := []Node{}
+				thread := "false"
+
+				if tokens[index+2].Identifier == "Greater" {
+					func_tokens, new_index := lexer.GetTokensBetween(index+2, "Terminator", tokens)
+					index = new_index
+					parsed_func_call = ParseTokens(func_tokens)
+					thread = "true"
+				} else {
+					func_tokens, new_index := lexer.GetTokensBetween(index+1, "Terminator", tokens)
+					index = new_index
+					parsed_func_call = ParseTokens(func_tokens)
+				}
+
+				d.Log("debug", "PARSED_FUNC_CALL: ")
+				for _, node := range parsed_func_call {
+					d.Log("debug", node.Identifier+"["+node.Content+"]")
+				}
+
+				node := Node{
+					Identifier: "Method_Call",
+					Content:    thread,
+					Children: []Node{
+						{
+							Identifier: "Object_Name",
+							Content:    object,
+						},
+					},
+				}
+
+				// TODO: Fix function calls without arguments not working correctly.
+				// NOTE: Might have something to do with indexing in the parser.
+				for _, node := range parsed_func_call {
+					fmt.Println("------------------", node)
+				}
+
+				node.Children = append(node.Children, parsed_func_call...)
+
+				nodes = append(nodes, node)
+
 			} else {
 				nodes = append(nodes, Node{
 					Identifier: "Identifier",

@@ -70,6 +70,8 @@ func (l *Lexer) Tokenize() []Token {
 						token.Identifier = "FunctionKeyword"
 					case "return":
 						token.Identifier = "ReturnKeyword"
+					case "thread":
+						token.Identifier = "ThreadKeyword"
 					}
 
 					new_tokens = append(new_tokens, token)
@@ -151,6 +153,14 @@ var SPECIALCHARACTERS = []SpecialCharacter{
 	{
 		Identifier: "MultOperator",
 		Content:    "*",
+	},
+	{
+		Identifier: "Greater",
+		Content:    ">",
+	},
+	{
+		Identifier: "DoubleGreater",
+		Content:    ">>",
 	},
 }
 

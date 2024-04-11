@@ -38,8 +38,12 @@ func Compile(nodes []parser.Node, level int) string {
 					output += argument.Content + ", "
 				}
 			}
+			if len(node.Children[0].Children) > 1 {
+				output = strings.TrimSuffix(output, ", ), ")
+				output += ")"
+			}
 			output = strings.TrimSuffix(output, ", ")
-			output += ")\n{\n"
+			output += "\n{\n"
 
 			for _, scope_node := range node.Children[1].Children {
 				scope_output := Compile([]parser.Node{scope_node}, level+1)
@@ -47,6 +51,14 @@ func Compile(nodes []parser.Node, level int) string {
 			}
 
 			output += "}\n"
+		} else if node.Identifier == "Method_Call" {
+			output += GetTabs(level) + node.Children[0].Content + " "
+			if node.Content == "true" {
+				output += "thread "
+			}
+			func_call := Compile([]parser.Node{node.Children[1]}, 0)
+			func_call = strings.ReplaceAll(func_call, "));\n", ");\n")
+			output += func_call
 		} else if node.Identifier == "Function_Call" {
 			output += GetTabs(level) + node.Content + "("
 
@@ -55,7 +67,7 @@ func Compile(nodes []parser.Node, level int) string {
 			}
 			output = strings.TrimSuffix(output, ", ")
 
-			output += ");\n"
+			output += ";\n"
 		} else if node.Identifier == "Return_Statement" {
 			output += GetTabs(level) + "return "
 
