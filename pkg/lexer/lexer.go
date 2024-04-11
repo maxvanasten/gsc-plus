@@ -32,6 +32,7 @@ func GetTokensBetween(index int, end_token_identifier string, input []Token) ([]
 		index += 1
 	}
 
+	tokens = append(tokens, input[index])
 	return tokens, index
 }
 
