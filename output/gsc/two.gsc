@@ -15,6 +15,7 @@ hello(name)
 {
 	print("Hello, "+name);
 	print(arg1,arg2);
+	print();
 }
 
 func_with_multiple_args(arg1, arg2, arg3)
