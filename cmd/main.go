@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/maxvanasten/gsc++/pkg/compiler"
 	"github.com/maxvanasten/gsc++/pkg/lexer"
 	"github.com/maxvanasten/gsc++/pkg/parser"
 )
@@ -47,4 +48,9 @@ func main() {
 	for _, node := range nodes {
 		fmt.Println(node)
 	}
+
+	output := compiler.Compile(nodes, 0)
+	fmt.Println(output)
+
+	os.WriteFile(output_file_path, []byte(output), 0666)
 }
