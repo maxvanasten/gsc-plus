@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -53,4 +55,11 @@ func main() {
 	fmt.Println(output)
 
 	os.WriteFile(output_file_path, []byte(output), 0666)
+
+	ast_json, err := json.Marshal(nodes)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	os.WriteFile("./output/ast/"+file_name+".json", ast_json, 0666)
 }
