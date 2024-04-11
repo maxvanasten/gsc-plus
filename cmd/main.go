@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/maxvanasten/gsc++/pkg/lexer"
 )
 
 func main() {
@@ -27,5 +28,16 @@ func main() {
 	if err != nil {
 		fmt.Println("Error while reading file:", err)
 		os.Exit(1)
+	}
+
+	lexer := lexer.Lexer{
+		Input: input_bytes,
+	}
+
+	tokens := lexer.Tokenize()
+
+	fmt.Println("Found", len(tokens), "tokens:")
+	for _, token := range tokens {
+		fmt.Println("[", token.Identifier, "]: >", token.Content, "<")
 	}
 }
