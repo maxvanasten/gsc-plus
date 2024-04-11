@@ -1,4 +1,4 @@
-name = "Max";
+name = "TesTMax";
 age = 22;
 name_copy = name;
 greeting = "Hello" + name + ", you are " + age + " years old!";

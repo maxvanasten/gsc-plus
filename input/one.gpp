@@ -1,4 +1,4 @@
-let name = "Max";
+let name = "TesTMax";
 let age = 22;
 let name_copy = name;
 let greeting = "Hello" + name + ", you are " + age + " years old!";
